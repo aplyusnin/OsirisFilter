@@ -107,12 +107,12 @@ namespace osiris
 		size_t p = 0;
 
 		// sort goes here
-		//radixSortBucket(info, size);
+		radixSortBucket(info, size);
 
-		std::sort(info, info + size, [](std::pair<location_t, uint8_t*>& l, std::pair<location_t, uint8_t*>& r)
+		/*std::sort(info, info + size, [](std::pair<location_t, uint8_t*>& l, std::pair<location_t, uint8_t*>& r)
 		{
 				return l.first.first_bucket < r.first.first_bucket;
-		});
+		});*/
 
 		size_t q = 0;
 

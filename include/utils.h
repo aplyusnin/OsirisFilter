@@ -198,30 +198,6 @@ namespace osiris
         return bits;
     }
 
-    // static memory for high-len keys
-    inline int32_t cntL[3][1024];
-    inline int32_t totL[3][1024];
-
-    // use for comparison
-    inline void radixSortFull(location_t* loc, location_t* buffer, size_t n)
-    {
-        for (size_t it = 0; it < 4; ++it)
-        {
-            memset(cntL, 0, sizeof(cntL));
-            memset(totL, 0, sizeof(totL));
-            for (size_t i = 0; i < n; ++i)
-            {
-                cntL[0][loc[i].position[it] & 1023]++;
-            }
-        }
-    }
-
-    // use for comparison
-    inline void radixSortFirstPos(location_t* loc, location_t* buffer, size_t n)
-    {
-
-    }
-
     // in practice, number of buckets rarely exceeds 550 and never exceeds 600
     inline size_t cntB[1000];
     inline size_t totB[1000];
