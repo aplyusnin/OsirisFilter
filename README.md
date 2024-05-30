@@ -63,7 +63,7 @@ Result variable stores true iff there is any key in the keyset that belongs to t
 For serialization and deserialization use:
 
 ```c++
-    auto data = filter->serialize();
+    std::pair<uint8_t*, size_t> data = filter->serialize();
 ```
 
 It returns pointer to byte array, where the structure is stored and size of the array.
@@ -72,12 +72,12 @@ For deserialization use:
 
 ```c++
     uint8_t* data = ...; // restore serialized structure
-    auto filter = osiris::deserialize(data); // deserialize it to the class 
+    OsirisFilter* filter = osiris::deserialize(data); // deserialize it to the class 
 ```
 
 ### Examples and benchmarks
 
-More examples can be found [here](examples.cpp).
+More examples can be found [here](example.cpp).
 
 To do some performance tests use: `bench/`
 
