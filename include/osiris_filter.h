@@ -34,8 +34,7 @@ namespace osiris
 
     class OsirisFilter
     {
-    //protected:
-    public:
+    protected:
         Dictionary* length[2] = {nullptr};
 
         Dictionary* links[2][32] = {nullptr};

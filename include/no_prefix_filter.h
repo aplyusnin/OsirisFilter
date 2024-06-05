@@ -79,7 +79,7 @@ namespace osiris
 
             while (!built)
             {
-                retries ++;
+                retries++;
                 hash_seed = osiris_rng();
                 data.id = 0;
                 collectHashes(data, keys, 0ull, keys.size() - 1, 0ull, hash_seed, hash_seed);

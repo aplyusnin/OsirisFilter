@@ -25,8 +25,7 @@ namespace osiris
 {
     class Dictionary
     {
-    //protected:
-    public:
+    protected:
         uint8_t* data;
         DataLayout layout;
 

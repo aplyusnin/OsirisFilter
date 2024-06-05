@@ -280,18 +280,18 @@ namespace osiris
             hash_t s = hash_seed;
 
             uint32_t pt = 0;
-            uint32_t linkLen = 0;
-            int hashId = 0;
+            uint32_t link_len = 0;
+            int hash_id = 0;
 
             // first bit of the left key
-            bool leftBit = (left[0] >> 7) & 1;
+            bool left_bit = (left[0] >> 7) & 1;
             // first bit of the right key
-            bool rightBit = (right[0] >> 7) & 1;
+            bool right_bit = (right[0] >> 7) & 1;
             hash_t h1, h2;
 
             // if first bits differ ---> we have to check existence of the keys >/>= than the left starting with 0
             // or keys </<= than right starting with 1
-            if (leftBit != rightBit)
+            if (left_bit != right_bit)
             {
                 // if there is keys starting with 0 ---> check keys starting with 0
                 if (root_mask & 1)
@@ -306,7 +306,7 @@ namespace osiris
             // both the left and the right keys start with the same bit
 
             // check if there are keys starting with it
-            if (!(root_mask >> (int32_t)leftBit))
+            if (!(root_mask >> (int32_t)left_bit))
             {
                 return false;
             }
@@ -316,15 +316,15 @@ namespace osiris
             uint8_t currentValue = 0;
 
             // while the common part is not consumed
-            while (pos < key_length)
+            while (pos < key_len)
             {
                 // extract next left bit
-                leftBit = (leftValue & m0) > 0;
+                left_bit = (leftValue & m0) > 0;
                 // extract next right bit
-                rightBit = (rightValue & m0) > 0;
+                right_bit = (rightValue & m0) > 0;
 
                 // if there is still a link, try to consume it
-                if (pt < linkLen)
+                if (pt < link_len)
                 {
                     // next byte is reached
                     if (!(pt & 7))
@@ -335,38 +335,38 @@ namespace osiris
                     // extract current bit of the link
                     bool currentBit = (currentValue & m1) > 0;
                     // if bits of the left and the right keys differ
-                    if (leftBit != rightBit)
+                    if (left_bit != right_bit)
                     {
-                        if (currentBit == leftBit && rangeQueryLeftLink(left, pos, m0, pt, m1, linkLen, cur, s, hashId, prefix_buffer, tail_buffer, include_left)) return true;
-                        if (currentBit == rightBit && rangeQueryRightLink(right, pos, m0, pt, m1, linkLen, cur, s, hashId, prefix_buffer, tail_buffer, include_right)) return true;
+                        if (currentBit == left_bit && rangeQueryLeftLink(left, pos, m0, pt, m1, link_len, cur, s, hash_id, prefix_buffer, tail_buffer, include_left)) return true;
+                        if (currentBit == right_bit && rangeQueryRightLink(right, pos, m0, pt, m1, link_len, cur, s, hash_id, prefix_buffer, tail_buffer, include_right)) return true;
                         return false;
                     }
                     // if bits are equal
                     // if they don't extend the link ---> no key
-                    if (currentBit != leftBit)
+                    if (currentBit != left_bit)
                     {
                         return false;
                     }
 
                     m1 <<= 1;
                     pt++;
-                    if (pt == linkLen)
+                    if (pt == link_len)
                     {
-                        pt = linkLen = 0;
+                        pt = link_len = 0;
                     }
                     // prepare to pick next bits form both keys
-                    NEXT_BITS_IN_LOOP(left, leftValue, right, rightValue, pos, m0, key_length)
+                    NEXT_BITS_IN_LOOP(left, leftValue, right, rightValue, pos, m0, key_len)
                         continue;
                 }
 
                 // there is a split at the current node
-                if (leftBit != rightBit)
+                if (left_bit != right_bit)
                 {
-                    if (rangeQueryTail(left, pos, m0, cur, s, hashId, include_left, true, false, tail_buffer))
+                    if (rangeQueryTail(left, pos, m0, cur, s, hash_id, include_left, true, false, tail_buffer))
                     {
                         return true;
                     }
-                    if (rangeQueryTail(right, pos, m0, cur, s, hashId, include_right, false, false, tail_buffer))
+                    if (rangeQueryTail(right, pos, m0, cur, s, hash_id, include_right, false, false, tail_buffer))
                     {
                         return true;
                     }
@@ -374,13 +374,13 @@ namespace osiris
                 }
 
                 // otherwise update link
-                linkLen = extractLink(leftBit, cur, prefix_buffer);
+                link_len = extractLink(left_bit, cur, prefix_buffer);
                 pt = 0;
 
                 // go to the next vertex
-                UPDATE_HASH(cur, s, leftBit, hashId, h1, h2)
+                UPDATE_HASH(cur, s, left_bit, hash_id, h1, h2)
                 // prepare to get next bits
-                NEXT_BITS_IN_LOOP(left, leftValue, right, rightValue, pos, m0, key_length)
+                NEXT_BITS_IN_LOOP(left, leftValue, right, rightValue, pos, m0, key_len)
             }
 
             // if we didn't reach left keys size's end ---> there is no keys we're looking for
@@ -391,19 +391,19 @@ namespace osiris
 
             // otherwise the left key is traversed
             // if the common prefix is in a leaf ---> it is the only key in the segment, check if it belongs to the segment
-            if (pos == key_length)
+            if (pos == key_len)
             {
                 return include_left;
             }
 
             // the only case ---> left key is a prefix of valid keys, trying to find them
             // if we haven't stopped inside the link ---> traverse the right's key tail
-            if (pt == linkLen)
+            if (pt == link_len)
             {
-                return rangeQueryTail(right, pos, m0, cur, s, hashId, include_right, false, true, tail_buffer);
+                return rangeQueryTail(right, pos, m0, cur, s, hash_id, include_right, false, true, tail_buffer);
             }
             // otherwise try to consume the link first
-            return rangeQueryRightLink(right, pos, m0, pt, m1, linkLen, cur, s, hashId, prefix_buffer, tail_buffer, include_right);
+            return rangeQueryRightLink(right, pos, m0, pt, m1, link_len, cur, s, hash_id, prefix_buffer, tail_buffer, include_right);
         }
 
 
@@ -626,9 +626,7 @@ namespace osiris
         // deserializing constructor 
 		FixedLengthFilter(uint8_t* buf)
 		{
-            uint8_t* kekw = buf;
-            // assert(buf[0] == getFilterId());
-            buf = deserializeCore(buf);
+           buf = deserializeCore(buf);
 
             memmove(&root_mask, buf, sizeof(root_mask));
             buf += sizeof(root_mask);

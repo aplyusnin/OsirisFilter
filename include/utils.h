@@ -209,7 +209,7 @@ namespace osiris
         memset(totB, 0, sizeof(totB));
         for (size_t i = 0; i < n; ++i)
         {
-            cntB[loc[i].first.first_bucket] ++;
+            cntB[loc[i].first.first_bucket]++;
         }
 
         for (size_t i = 1; i < 1000; ++i)
